@@ -6,7 +6,7 @@ export class LoggedUserRdo {
     description: 'The uniq user ID',
     example: '13'
   })
-  @Expose({ name: '_id' })
+  @Expose()
   public id: string;
 
   @ApiProperty({

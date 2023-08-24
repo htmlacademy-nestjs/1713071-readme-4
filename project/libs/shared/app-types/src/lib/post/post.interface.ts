@@ -6,10 +6,19 @@ export interface IPost {
   originId?: string
   userId?: string;
   originUserId?: string;
+  title?: string;
+  announcement?: string;
+  description?: string
+  text?: string;
+  url?: string;
+  author?: string;
+  photo?: string;
+  tags?: string[];
+  creationDate: string,
+  publicationDate: string,
   type: PostType
   status: PostStatus
-  tags?: string[];
-  isReposted: boolean;
-  commentsCount: number
-  likesCount: number;
+  isReposted?: boolean;
+  commentsCount?: number
+  likesCount?: number;
 }

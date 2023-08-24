@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PostMemoryRepository } from './post-memory.repository';
-import { TCreateBlogPostDto } from './dto/create/create-blog-post-dto.type';
-import dayjs from 'dayjs';
-import { PostStatus } from '@project/shared/app-types';
-import { PostBlogEntityHashTable } from './entity/post-blog-entity-hash-table';
-import { TUpdateBlogPostDto } from './dto/update/update-blog-post-dto.type';
+import { PostMemoryRepository } from './post-memory.repository.js';
+import { IPost, PostStatus } from '@project/shared/app-types';
+import { CreatePostDto } from './dto/create/create-post.dto.js';
+import { UpdatePostDto } from './dto/update/update-post.dto.js';
+import { PostEntity } from './entity/post.entity.js';
 
 @Injectable()
 export class PostService {
@@ -12,42 +11,50 @@ export class PostService {
     private readonly postRepository: PostMemoryRepository
   ) {}
 
-  public async create(dto: TCreateBlogPostDto) {
+  public async create(dto: CreatePostDto) {
     const post = {
       ...dto,
       status: PostStatus.Published,
-      createdDate: dayjs().toISOString(),
-      postedDate: dayjs().toISOString(),
-      isReposted: false,
-      commentsCount: 0,
-      likesCount: 0
+      creationDate: new Date().toISOString(),
+      publicationDate: new Date().toISOString(),
     };
-
-    const postEntity = await new PostBlogEntityHashTable[dto.type](post);
+    const postEntity = new PostEntity(post);
     return this.postRepository.create(postEntity);
   }
 
-  public async update(postId: string, dto: TUpdateBlogPostDto) {
+  public async update(postId: string, dto: UpdatePostDto) {
     const post = await this.findById(postId);
 
     if (!post) {
       throw new NotFoundException('Post is not found!');
     }
     const updatedPost = { ...post, ...dto };
-    const postEntity = await new PostBlogEntityHashTable[dto.type](updatedPost);
+    const postEntity = new PostEntity(updatedPost);
     return this.postRepository.update(postId, postEntity);
   }
 
-  public async repost(postId: string, userId: string) {
-    return this.postRepository.repost(postId, userId);
+  public async repost(id: string, userId: string): Promise<IPost | null> {
+    const post = await this.findById(id);
+    if (!post) {
+      return null;
+    }
+    const reposted = {
+      ...post,
+      userId: userId,
+      originId: id,
+      originUserId: post.userId,
+      isReposted: true
+    };
+    delete reposted.id;
+    return this.create(reposted);
   }
 
   public async remove(postId: string) {
-    return this.postRepository.destroy(postId);
+    return this.postRepository.delete(postId);
   }
 
   public async findById(postId: string) {
-    const post = await this.postRepository.findById(postId);
+    const post = await this.postRepository.findOne(postId);
     if (!post) {
       throw new NotFoundException('Post is not found!');
     }
@@ -55,6 +62,6 @@ export class PostService {
   }
 
   public async findAll() {
-    return this.postRepository.findAll();
+    return this.postRepository.findMany();
   }
 }

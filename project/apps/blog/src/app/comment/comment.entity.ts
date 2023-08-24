@@ -1,9 +1,10 @@
 import { IComment } from '@project/shared/app-types';
 
 export class CommentEntity implements IComment {
-  public id: string;
+  public id?: string;
   public userId: string;
   public postId: string
+  public creationDate: string
   public text: string;
 
   constructor(comment: IComment) {
@@ -15,6 +16,7 @@ export class CommentEntity implements IComment {
       id: this.id,
       userId: this.userId,
       postId: this.postId,
+      creationDate: this.creationDate,
       text: this.text
     }
   }
@@ -23,6 +25,7 @@ export class CommentEntity implements IComment {
     this.id = comment.id;
     this.userId = comment.userId;
     this.postId = comment.postId;
+    this.creationDate = comment.creationDate;
     this.text = comment.text;
   }
 }

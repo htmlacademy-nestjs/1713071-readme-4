@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PostMemoryRepository } from './post-memory.repository';
+import { PostMemoryRepository } from './post-memory.repository.js';
+import { PostController } from './post.controller.js';
+import { PostService } from './post.service.js';
 
 @Module({
-  providers: [PostMemoryRepository],
+  controllers: [PostController],
+  providers: [PostMemoryRepository, PostService],
   exports: [PostMemoryRepository]
 })
 export class PostModule {}

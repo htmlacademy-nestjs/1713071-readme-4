@@ -1,55 +1,40 @@
-import { CRUDRepository } from '@project/util/util-types';
-import { TPostBlog } from '@project/shared/app-types';
-import { PostBlogEntity } from './entity/post-blog.entity';
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { PostEntity } from './entity/post.entity.js';
+import { CRUDRepository } from '@project/util/util-types';
+import { IPost } from '@project/shared/app-types';
 
-@Injectable
-export class PostMemoryRepository implements CRUDRepository<PostBlogEntity, string, TPostBlog> {
-  private repository: Record<string, TPostBlog> = {};
+@Injectable()
+export class PostMemoryRepository implements CRUDRepository<PostEntity, string, IPost> {
+  private repository: Record<string, IPost> = {};
 
-  public async create(item: PostBlogEntity): Promise<TPostBlog> {
+  public async create(item: PostEntity): Promise<IPost> {
     const entry = { ...item.toObject(), id: randomUUID() };
-    this.repository[entry.id] = entry as TPostBlog;
-    return entry as TPostBlog;
+    this.repository[entry.id] = entry;
+    return entry;
   }
 
-  public async update(id: string, item: PostBlogEntity): Promise<TPostBlog> {
-    this.repository[id] = { ...item.toObject(), id: id } as TPostBlog;
-    return this.findById(id);
-  }
-
-  public async repost(id: string, userId: string): Promise<TPostBlog> {
-    const post = await this.findById(id);
-    if (!post) {
-      return null;
+  public async update(id: string, item: PostEntity): Promise<IPost | null> {
+    const targetPost = this.repository[id];
+    if (targetPost) {
+      this.repository[id] = { ...item.toObject() };
+      return { ...this.repository[id] }
     }
-    const reposted = {
-      ...post,
-      userId: userId,
-      originId: id,
-      originUserId: post.userId,
-      isReposted: true
-    };
-    delete reposted.id;
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return this.create(reposted);
+    return null
   }
 
-  public async destroy(id: string): Promise<void> {
+  public async delete(id: string): Promise<void> {
     delete this.repository[id];
   }
 
-  public async findById(id: string): Promise<TPostBlog | null> {
+  public async findOne(id: string): Promise<IPost | null> {
     if (this.repository[id]) {
-      return { ...this.repository[id] } as TPostBlog;
+      return { ...this.repository[id] };
     }
     return null;
   }
 
-  public async findAll(): Promise<TPostBlog[]> {
+  public async findMany(): Promise<IPost[]> {
     const existPost = Object.values(this.repository)
 
     if (!existPost) {

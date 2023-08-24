@@ -1,57 +1,47 @@
 import { Body, Controller, Post, Patch, Param, Delete, HttpStatus, Get } from '@nestjs/common';
-import { PostService } from './post.service';
-import { TCreateBlogPostDto } from './dto/create/create-blog-post-dto.type';
+import { PostService } from './post.service.js';
 import { fillObject } from '@project/util/util-core';
-import { TBlogPostRdo } from './rdo/blog-post-rdo.type';
-import { TUpdateBlogPostDto } from './dto/update/update-blog-post-dto.type';
 import { ApiResponse } from '@nestjs/swagger';
+import { PostRdo } from './rdo/post.rdo.js';
+import { CreatePostDto } from './dto/create/create-post.dto.js';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(
     private readonly postService: PostService
   ) {}
 
   @ApiResponse({
-    // type: TBlogPostRdo,
+    type: PostRdo,
     status: HttpStatus.CREATED,
     description: 'The post has been created successfully!',
   })
   @Post('add')
-  public async create(@Body dto: TCreateBlogPostDto) {
+  public async create(@Body() dto: CreatePostDto) {
     const post = await this.postService.create(dto);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return fillObject(TBlogPostRdo, post)
+    return fillObject(PostRdo, post)
   }
 
   @ApiResponse({
-    // type: TBlogPostRdo,
+    type: PostRdo,
     status: HttpStatus.CREATED,
     description: 'The post has been reposted',
   })
   @Post('repost')
-  public async repost(@Body dto: TCreateBlogPostDto) {
-    const post = await this.postService.repost(dto);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return fillObject(TBlogPostRdo, post)
+  public async repost(@Param('id') id: string, @Param('id') userId: string,) {
+    const post = await this.postService.repost(id, userId);
+    return fillObject(PostRdo, post)
   }
 
   @ApiResponse({
-    // type: TBlogPostRdo,
+    type: PostRdo,
     status: HttpStatus.CREATED,
     description: 'The post has been updated',
   })
   @Patch(':id')
-  public async update(@Param('id') id: string, @Body dto: TUpdateBlogPostDto) {
+  public async update(@Param('id') id: string, @Body() dto: CreatePostDto) {
     const post = await this.postService.update(id, dto);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return fillObject(TBlogPostRdo, post);
+    return fillObject(PostRdo, post);
   }
 
   @ApiResponse({
@@ -65,27 +55,21 @@ export class PostController {
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The post has been deleted',
+    description: 'The post has been received',
   })
   @Get(':id')
   public async getPost(@Param('id') id: string) {
     const post = await this.postService.findById(id);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return fillObject(TBlogPostRdo, post)
+    return fillObject(PostRdo, post)
   }
 
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The post has been deleted',
+    description: 'The list of posts has been received',
   })
   @Get('/')
-  public async getAllPosts(@Param('id') id: string) {
+  public async getAllPosts() {
     const posts = await this.postService.findAll();
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return posts.map((post: TBlogPostRdo) => fillObject(TBlogPostRdo, post));
+    return posts.map((post: PostRdo) => fillObject(PostRdo, post));
   }
 }

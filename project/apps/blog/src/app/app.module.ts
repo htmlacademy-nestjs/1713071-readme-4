@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PostModule } from './post/post.module';
-import { CommentModule } from './comment/comment.module';
-import { LikeModule } from './like/like.module';
+import { PostController } from './post/post.controller.js';
+import { PostMemoryRepository } from './post/post-memory.repository.js';
+import { PostService } from './post/post.service.js';
 
 @Module({
-  imports: [PostModule, CommentModule, LikeModule],
-  controllers: [],
-  providers: [],
+  controllers: [PostController],
+  providers: [PostMemoryRepository, PostService],
 })
 export class AppModule {}
