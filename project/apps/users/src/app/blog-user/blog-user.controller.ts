@@ -1,12 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Patch } from '@nestjs/common';
 import { BlogUserService } from './blog-user.service.js';
 import { ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from '../authentication/dto/create-user.dto.js';
 import { fillObject } from '@project/util/util-core';
 import { UserRdo } from '../authentication/rdo/user.rdo.js';
-import { LoginUserDto } from '../authentication/dto/login-user.dto.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 
-@Controller('blog-user')
+@Controller('blog-users')
 export class BlogUserController {
   constructor(
     private readonly blogUser: BlogUserService
@@ -37,9 +37,9 @@ export class BlogUserController {
     status: HttpStatus.OK,
     description: 'The password successfully changed.'
   })
-  @Post('change-password')
-  public async changePassword(@Param('newPassword') newPassword: string, @Body() dto: LoginUserDto) {
-    const userWithUpdatedPassword = await this.blogUser.changePassword(newPassword, dto);
+  @Patch('change-password')
+  public async changePassword(@Body() dto: ChangePasswordDto) {
+    const userWithUpdatedPassword = await this.blogUser.changePassword(dto);
     return fillObject(UserRdo, userWithUpdatedPassword);
   }
 }

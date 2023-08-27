@@ -4,7 +4,7 @@ import { PostStatus } from './post-status.enum';
 export interface IPost {
   id?: string;
   originId?: string
-  userId?: string;
+  userId: string;
   originUserId?: string;
   title?: string;
   announcement?: string;

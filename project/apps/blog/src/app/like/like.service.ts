@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { LikeMemoryRepository } from './like-memory.repository.js';
-import { UpdateLikeDto } from './dto/update-like.dto.js';
 import { LikeEntity } from './like.entity.js';
+import { LikeMemoryRepository } from './like-memory.repository.js';
+import { CreateLikeDto } from './dto/create-like.dto.js';
+import { DeleteLikeDto } from './dto/delete-like.dto.js';
 
 @Injectable()
 export class LikeService {
@@ -9,8 +10,13 @@ export class LikeService {
     private readonly likeRepository: LikeMemoryRepository
   ) {}
 
-  public async update(dto: UpdateLikeDto) {
+  public async create(dto: CreateLikeDto) {
     const likeEntity = new LikeEntity(dto);
-    return this.likeRepository.update(dto.postId, likeEntity);
+    return this.likeRepository.create(likeEntity);
+  }
+
+  public async delete(dto: DeleteLikeDto) {
+    const likeEntity = new LikeEntity(dto);
+    return this.likeRepository.delete(likeEntity);
   }
 }

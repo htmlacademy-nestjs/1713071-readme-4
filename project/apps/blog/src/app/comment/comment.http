@@ -1,0 +1,40 @@
+# Create a new comment
+POST http://localhost:3333/api/comments/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "12uN7",
+  "userId": "12uN7",
+  "postId": "12uN7",
+  "text": "Text example"
+}
+
+###
+# Update a comment
+PATCH http://localhost:3333/api/comments/update/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "12uN7",
+  "userId": "12uN7",
+  "postId": "12uN7",
+  "text": "Text example"
+}
+
+###
+
+# Delete a comment
+DELETE http://localhost:3333/api/comments/delete/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "12uN7",
+  "postId": "12uN7"
+}
+
+###
+
+# Get comment by ID
+GET http://localhost:3333/api/comments/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+
+###

@@ -4,7 +4,5 @@ import { AuthenticationModule } from './authentication/authentication.module.js'
 
 @Module({
   imports: [AuthenticationModule, BlogUserModule],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

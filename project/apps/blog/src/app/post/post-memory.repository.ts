@@ -14,13 +14,10 @@ export class PostMemoryRepository implements CRUDRepository<PostEntity, string, 
     return entry;
   }
 
-  public async update(id: string, item: PostEntity): Promise<IPost | null> {
-    const targetPost = this.repository[id];
-    if (targetPost) {
-      this.repository[id] = { ...item.toObject() };
-      return { ...this.repository[id] }
-    }
-    return null
+  public async update(id: string, item: PostEntity): Promise<IPost> {
+    const entry = { ...item.toObject() };
+    this.repository[entry.id as string] = { ...item.toObject() };
+    return { ...this.repository[entry.id as string] }
   }
 
   public async delete(id: string): Promise<void> {
@@ -34,7 +31,7 @@ export class PostMemoryRepository implements CRUDRepository<PostEntity, string, 
     return null;
   }
 
-  public async findMany(): Promise<IPost[]> {
+  public async findMany(): Promise<IPost[] | null> {
     const existPost = Object.values(this.repository)
 
     if (!existPost) {

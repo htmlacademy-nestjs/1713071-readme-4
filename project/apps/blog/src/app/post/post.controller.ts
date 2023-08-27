@@ -3,20 +3,23 @@ import { PostService } from './post.service.js';
 import { fillObject } from '@project/util/util-core';
 import { ApiResponse } from '@nestjs/swagger';
 import { PostRdo } from './rdo/post.rdo.js';
-import { CreatePostDto } from './dto/create/create-post.dto.js';
+import { CreatePostDto } from './dto/create-post.dto.js';
+import { UpdatePostDto } from './dto/update-post.dto.js';
+import { RepostDto } from './dto/repost.dto.js';
 
 @Controller('posts')
 export class PostController {
   constructor(
     private readonly postService: PostService
-  ) {}
+  ) {
+  }
 
   @ApiResponse({
     type: PostRdo,
     status: HttpStatus.CREATED,
     description: 'The post has been created successfully!',
   })
-  @Post('add')
+  @Post('create')
   public async create(@Body() dto: CreatePostDto) {
     const post = await this.postService.create(dto);
     return fillObject(PostRdo, post)
@@ -28,8 +31,8 @@ export class PostController {
     description: 'The post has been reposted',
   })
   @Post('repost')
-  public async repost(@Param('id') id: string, @Param('id') userId: string,) {
-    const post = await this.postService.repost(id, userId);
+  public async repost(@Body() dto: RepostDto) {
+    const post = await this.postService.repost(dto);
     return fillObject(PostRdo, post)
   }
 
@@ -38,8 +41,8 @@ export class PostController {
     status: HttpStatus.CREATED,
     description: 'The post has been updated',
   })
-  @Patch(':id')
-  public async update(@Param('id') id: string, @Body() dto: CreatePostDto) {
+  @Patch('update/:id')
+  public async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
     const post = await this.postService.update(id, dto);
     return fillObject(PostRdo, post);
   }
@@ -48,7 +51,7 @@ export class PostController {
     status: HttpStatus.OK,
     description: 'The post has been deleted',
   })
-  @Delete(':id')
+  @Delete('delete/:id')
   public async delete(@Param('id') id: string) {
     return await this.postService.remove(id);
   }
@@ -70,6 +73,8 @@ export class PostController {
   @Get('/')
   public async getAllPosts() {
     const posts = await this.postService.findAll();
-    return posts.map((post: PostRdo) => fillObject(PostRdo, post));
+    if (posts) {
+      return posts.map((post: PostRdo) => fillObject(PostRdo, post));
+    }
   }
 }

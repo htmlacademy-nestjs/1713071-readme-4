@@ -1,0 +1,49 @@
+# Create a new post
+POST http://localhost:3333/api/posts/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "12uN7",
+  "announcement": "Announcement description",
+  "title": "Title example",
+  "text": "Text example"
+}
+
+###
+
+# Make a repost
+POST http://localhost:3333/api/posts/repost HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "12uN7",
+  "userId": "12uN7"
+}
+
+###
+
+# Update a post
+PATCH http://localhost:3333/api/posts/update/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Title example",
+  "text": "Text example"
+}
+
+###
+
+# Delete a post
+DELETE http://localhost:3333/api/posts/delete/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+
+###
+
+# Get post by ID
+GET http://localhost:3333/api/posts/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+
+###
+
+# Get all posts
+GET http://localhost:3333/api/posts HTTP/1.1
+
+###

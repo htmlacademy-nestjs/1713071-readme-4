@@ -2,10 +2,10 @@ import dayjs from 'dayjs';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { BlogUserMemoryRepository } from './blog-user-memory.repository.js';
 import { CreateUserDto } from '../authentication/dto/create-user.dto.js';
-import { AUTH_USER_EXISTS } from '../authentication/authentication.constant.js';
+import { USER_EXISTS } from '../authentication/authentication.error.js';
 import { BlogUserEntity } from './blog-user.entity.js';
-import { LoginUserDto } from '../authentication/dto/login-user.dto.js';
 import { AuthenticationService } from '../authentication/authentication.service.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 
 @Injectable()
 export class BlogUserService {
@@ -28,17 +28,19 @@ export class BlogUserService {
 
     const existUser = await this.blogUserRepository.findByEmail(email);
     if (existUser) {
-      throw new ConflictException(AUTH_USER_EXISTS);
+      throw new ConflictException(USER_EXISTS);
     }
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password)
     return this.blogUserRepository.create(userEntity);
   }
 
-  public async changePassword(newPassword: string, dto: LoginUserDto) {
+  public async changePassword(dto: ChangePasswordDto) {
     const existUser = await this.authenticationService.verifyUser(dto);
-    const updatedUser = await new BlogUserEntity(existUser).setPassword(newPassword);
+    const updatedUser = await new BlogUserEntity(existUser).setPassword(dto.newPassword);
     const { id } = updatedUser;
-    return this.blogUserRepository.update(id, updatedUser);
+    if (id) {
+      return this.blogUserRepository.update(id, updatedUser);
+    }
   }
 
   public async getUser(id: string) {

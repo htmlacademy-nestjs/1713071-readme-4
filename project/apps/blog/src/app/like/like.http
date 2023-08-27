@@ -1,0 +1,21 @@
+# Add a post to favorites.
+POST http://localhost:3333/api/likes/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "12uN7",
+  "postId": "12uN7"
+}
+
+###
+
+# Delete a post from favorites.
+DELETE http://localhost:3333/api/likes/delete/7aef6925-4fe5-4057-b5cc-cc7cf214df05 HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "12uN7",
+  "postId": "12uN7"
+}
+
+###

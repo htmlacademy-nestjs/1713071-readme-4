@@ -3,7 +3,7 @@ import { IPost, PostStatus, PostType } from '@project/shared/app-types';
 export class PostEntity implements IPost {
   public id?: string;
   public originId?: string
-  public userId?: string;
+  public userId: string;
   public originUserId?: string;
   public title?: string;
   public announcement?: string;

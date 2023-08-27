@@ -1,8 +1,9 @@
-import { CRUDRepository } from '@project/util/util-types';
-import { BlogUserEntity } from './blog-user.entity.js';
-import { IUser } from '@project/shared/app-types';
 import { randomUUID } from 'node:crypto';
-import { Injectable } from '@nestjs/common';
+import { BlogUserEntity } from './blog-user.entity.js';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { USER_NOT_FOUND } from '../authentication/authentication.error.js';
+import { CRUDRepository } from '@project/util/util-types';
+import { IUser } from '@project/shared/app-types';
 
 @Injectable()
 export class BlogUserMemoryRepository implements CRUDRepository<BlogUserEntity, string, IUser> {
@@ -23,15 +24,15 @@ export class BlogUserMemoryRepository implements CRUDRepository<BlogUserEntity, 
     if (this.repository[id]) {
       return { ...this.repository[id] };
     }
-    return null;
+    throw new NotFoundException(USER_NOT_FOUND);
   }
 
-  public async findByEmail(email: string): Promise<IUser | null> {
+  public async findByEmail(email: string): Promise<IUser> {
     const existUser = Object.values(this.repository)
       .find((userItem) => userItem.email === email);
 
     if (!existUser) {
-      return null;
+      throw new NotFoundException(USER_NOT_FOUND);
     }
     return { ...existUser };
   }

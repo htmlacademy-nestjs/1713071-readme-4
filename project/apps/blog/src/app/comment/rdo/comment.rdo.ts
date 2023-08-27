@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 
 export class CommentRdo {
   @ApiProperty({
-    description: 'The unique id of the comment',
+    description: 'The unique ID of the comment',
     example: '12uN7'
   })
   @Expose()

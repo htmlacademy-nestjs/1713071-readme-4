@@ -3,9 +3,9 @@ import { compare, genSalt, hash } from 'bcrypt';
 import { SALT_ROUNDS } from './blog-user.constant';
 
 export class BlogUserEntity implements IUser {
-  public id: string;
-  public avatar: string;
-  public registrationDate: Date;
+  public id?: string;
+  public avatar?: string;
+  public registrationDate?: Date;
   public email: string;
   public firstname: string;
   public lastname: string;

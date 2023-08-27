@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostMemoryRepository } from './post-memory.repository.js';
-import { IPost, PostStatus } from '@project/shared/app-types';
-import { CreatePostDto } from './dto/create/create-post.dto.js';
-import { UpdatePostDto } from './dto/update/update-post.dto.js';
+import { CreatePostDto } from './dto/create-post.dto.js';
+import { UpdatePostDto } from './dto/update-post.dto.js';
 import { PostEntity } from './entity/post.entity.js';
+import { POST_NOT_FOUND } from './post.error.js';
+import { IPost, PostStatus } from '@project/shared/app-types';
+import { RepostDto } from './dto/repost.dto.js';
 
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostMemoryRepository
-  ) {}
+  ) {
+  }
 
   public async create(dto: CreatePostDto) {
     const post = {
@@ -22,21 +25,22 @@ export class PostService {
     return this.postRepository.create(postEntity);
   }
 
-  public async update(postId: string, dto: UpdatePostDto) {
-    const post = await this.findById(postId);
+  public async update(id: string, dto: UpdatePostDto) {
+    const post = await this.findById(id);
 
     if (!post) {
-      throw new NotFoundException('Post is not found!');
+      throw new NotFoundException(POST_NOT_FOUND);
     }
     const updatedPost = { ...post, ...dto };
     const postEntity = new PostEntity(updatedPost);
-    return this.postRepository.update(postId, postEntity);
+    return this.postRepository.update(id, postEntity);
   }
 
-  public async repost(id: string, userId: string): Promise<IPost | null> {
+  public async repost(dto: RepostDto): Promise<IPost> {
+    const { id, userId } = dto;
     const post = await this.findById(id);
     if (!post) {
-      return null;
+      throw new NotFoundException(POST_NOT_FOUND);
     }
     const reposted = {
       ...post,
@@ -56,7 +60,7 @@ export class PostService {
   public async findById(postId: string) {
     const post = await this.postRepository.findOne(postId);
     if (!post) {
-      throw new NotFoundException('Post is not found!');
+      throw new NotFoundException(POST_NOT_FOUND);
     }
     return post;
   }
